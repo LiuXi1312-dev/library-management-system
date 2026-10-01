@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}录入图书{% endblock %}
+{% block body %}
+<div class="card" style="max-width:480px;">
+  <h3 style="margin-top:0;">图书信息录入（管理员）</h3>
+  <form method="post">
+    <p><input name="title" placeholder="书名 *" style="width:100%;" required></p>
+    <p><input name="author" placeholder="作者" style="width:100%;"></p>
+    <p><input name="publisher" placeholder="出版社" style="width:100%;"></p>
+    <p><input name="isbn" placeholder="ISBN" style="width:100%;"></p>
+    <p><input name="total" type="number" value="1" min="1" placeholder="总册数" style="width:100%;"></p>
+    <button class="btn" type="submit">保存</button>
+    <a class="btn ghost" href="{{ url_for('index') }}">返回</a>
+  </form>
+</div>
+{% endblock %}

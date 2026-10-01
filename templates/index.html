@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% if overdue or due_soon %}
+<div class="card">
+  <h3 style="margin-top:0;">借阅到期提醒</h3>
+  <p class="muted">已逾期 {{ overdue|length }} 条，{{ REMIND_DAYS|default(3) }} 天内到期 {{ due_soon|length }} 条。</p>
+  <table>
+    <tr><th>借阅人</th><th>图书</th><th>应还日期</th><th>状态</th></tr>
+    {% for r in overdue %}
+    <tr><td>{{ r[2] }}</td><td>{{ r[1] }}</td><td>{{ r[0].due_date }}</td>
+        <td><span class="tag danger">已逾期</span></td></tr>
+    {% endfor %}
+    {% for r in due_soon %}
+    <tr><td>{{ r[2] }}</td><td>{{ r[1] }}</td><td>{{ r[0].due_date }}</td>
+        <td><span class="tag warn">即将到期</span></td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <h3 style="margin:0;">图书检索</h3>
+    {% if session.get('role') == 'admin' %}
+      <a class="btn ghost" href="{{ url_for('new_book') }}">录入图书</a>
+    {% endif %}
+  </div>
+  <form class="search" method="get" style="margin-top:12px;">
+    <input name="q" value="{{ keyword }}" placeholder="按书名或作者搜索" style="flex:1;">
+    <button class="btn" type="submit">搜索</button>
+  </form>
+  <div class="grid">
+    {% for b in books %}
+    <div class="book">
+      <strong>{{ b.title }}</strong>
+      <p class="muted" style="margin:6px 0;">{{ b.author }} · {{ b.publisher }}</p>
+      <p class="muted">ISBN {{ b.isbn }}｜馆藏 {{ b.total }}｜可借 {{ b.available }}</p>
+      {% if session.get('role') in ['student','teacher'] and b.available > 0 %}
+      <form method="post" action="{{ url_for('borrow', book_id=b.id) }}">
+        <button class="btn" type="submit">借阅</button>
+      </form>
+      {% elif b.available == 0 %}
+      <span class="tag warn">已借完</span>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="muted">没有匹配的图书。</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0;">在借记录</h3>
+  <table>
+    <tr><th>#</th><th>借阅人</th><th>图书</th><th>借出日期</th><th>应还日期</th><th>操作</th></tr>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r[0].id }}</td><td>{{ r[2] }}</td><td>{{ r[1] }}</td>
+      <td>{{ r[0].borrow_date }}</td><td>{{ r[0].due_date }}</td>
+      <td>
+        <form method="post" action="{{ url_for('return_book', borrow_id=r[0].id) }}">
+          <button class="btn ghost" type="submit">归还</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="muted">暂无在借记录。</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

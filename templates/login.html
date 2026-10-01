@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}登录 · 图书管理系统{% endblock %}
+{% block body %}
+<div class="card" style="max-width:380px;margin:60px auto;">
+  <h3 style="margin-top:0;">多角色登录</h3>
+  <form method="post">
+    <p><input name="username" placeholder="用户名" style="width:100%;"></p>
+    <p><input name="password" type="password" placeholder="密码" style="width:100%;"></p>
+    <button class="btn" type="submit" style="width:100%;">登录</button>
+  </form>
+  <p class="muted" style="margin-top:16px;">
+    演示账号：admin/admin123（管理员）、teacher/teacher123（教师）、student/student123（学生）
+  </p>
+</div>
+{% endblock %}
